@@ -1,0 +1,57 @@
+:github-readme: ../README.adoc
+
+include::{github-readme}[tags=vardef]
+
+:projectpage: https://github.com/{gh-repo-owner}/{gh-repo-name}
+:bintraypage: https://bintray.com/jmini/maven/substring-finder
+
+include::{github-readme}[tags=header]
+
+== URLs
+
+* link:{homepage}[Project home] (this page)
+* link:{projectpage}[GitHub project]
+* link:{issues}[Issue tracker]
+
+TIP: Do you want to improve this page? Please git-link:self[edit it on GitHub, edit].
+
+include::{github-readme}[tags=description]
+
+Corresponding java code with `SubstringFinder`:
+
+[source,java,indent=0]
+----
+include::../src/test/java/fr/jmini/utils/substringfinder/SubstringFinderTest.java[tags=example]
+----
+
+With the import `fr.jmini.utils.substringfinder.SubstringFinder`.
+
+=== Build
+
+Build sources:
+
+----
+./gradlew build
+----
+
+Deploy to maven local:
+
+----
+./gradlew publishToMavenLocal
+----
+
+Build the documentation page:
+
+----
+mvn verify
+----
+
+Upload the documentation page on GitHub pages:
+
+----
+mvn exec:exec
+----
+
+include::{github-readme}[tags=contact-section]
+
+include::{github-readme}[tags=license-section]
