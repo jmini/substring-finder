@@ -1,15 +1,24 @@
-apply plugin: 'java-library'
-apply plugin: 'maven-publish'
+plugins {
+    id 'java-library'
+    id 'maven-publish'
+    id 'org.asciidoctor.convert' version '1.5.9.1'
+    id 'org.ajoberstar.git-publish' version '2.0.0'
+    id 'net.researchgate.release' version '2.6.0'
+}
 
 group = 'fr.jmini.utils'
-version = '1.0.0-SNAPSHOT'
 
 repositories {
     jcenter()
 }
 
+ext {
+    junitVersion = '5.3.1'
+}
+
 dependencies {
-    testCompile 'org.junit.jupiter:junit-jupiter-api:5.3.1'
+    testCompile "org.junit.jupiter:junit-jupiter-api:$junitVersion"
+    testRuntime "org.junit.jupiter:junit-jupiter-engine:$junitVersion"
 }
 
 task sourcesJar(type: Jar, dependsOn: classes) {
@@ -20,8 +29,96 @@ task sourcesJar(type: Jar, dependsOn: classes) {
 publishing {
     publications {
         mavenJava(MavenPublication) {
+            pom {
+                description = 'Java library for matching text'
+                url = 'https://jmini.github.io/substring-finder/'
+                licenses {
+                    license {
+                        name = 'Eclipse Public License - v 2.0'
+                        url = 'https://www.eclipse.org/org/documents/epl-2.0/EPL-2.0.html'
+                    }
+                }
+                developers {
+                    developer {
+                        id = 'jmini'
+                        name = 'Jeremie Bresson'
+                        email = 'dev@jmini.fr'
+                    }
+                }
+                scm {
+                    connection = 'scm:git:https://github.com/jmini/substring-finder.git'
+                    developerConnection = 'scm:git:https://github.com/jmini/substring-finder.git'
+                    url = 'https://github.com/jmini/substring-finder/'
+                }
+            }
             from components.java
             artifact sourcesJar
         }
     }
+    repositories {
+        maven {
+            url = mavenPublishUrl
+            credentials {
+                username = project.findProperty("bintrayUser") ?: ""
+                password = project.findProperty("bintrayPassword") ?: ""
+            }
+        }
+    }
+}
+
+def buildDate() {
+    return new Date().format('yyyy-MM-dd')
+}
+
+asciidoctor {
+    sourceDir = file('docs')
+    outputDir = file('build/docs')
+    attributes \
+        'revdate': "${buildDate()}",
+        'project-version' : "$version",
+        'source-highlighter': 'coderay',
+        'imagesdir': '',
+        'toc': 'left',
+        'icons': 'font',
+        'setanchors': 'true',
+        'idprefix': '',
+        'idseparator': '-',
+        'docinfo1': 'true'
+
+    repositories {
+        maven {
+            url "http://dl.bintray.com/jmini/maven/"
+        }
+        jcenter()
+    }
+    dependencies {
+        asciidoctor "com.bsiag.asciidoctorj:gh-edit:3.0.0"
+    }
+}
+
+gitPublish {
+    repoUri = 'git@github.com:' + "$githubRepositoryOwner" + '/' + "$githubRepositoryName" + '.git'
+    branch = 'gh-pages'
+
+    contents {
+        from "${file('build/docs/html5')}"
+    }
+
+    preserve {
+        include '.nojekyll'
+    }
+
+    commitMessage = "Update the 'gh-pages' branch."
+}
+
+release {
+    buildTasks = ['doRelease']
+}
+
+task doRelease {
+    dependsOn(
+        'publish',
+        'asciidoctor',
+        'gitPublishPush'
+    )
 }

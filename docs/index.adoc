@@ -11,11 +11,26 @@ include::{github-readme}[tags=header]
 
 * link:{homepage}[Project home] (this page)
 * link:{projectpage}[GitHub project]
+* link:{bintraypage}[Binaries on Bintray]
 * link:{issues}[Issue tracker]
 
 TIP: Do you want to improve this page? Please git-link:self[edit it on GitHub, edit].
 
 include::{github-readme}[tags=description]
+
+=== Text range example
+
+In following text, you want to match ranges that starts with `(` and ends with `)`:
+
+----
+5 + (4 + (1 + 2) / 3 - 5) * 10 / (3 + 2)
+----
+
+The first range is expected to be `(4 + (1 + 2) / 3 - 5)`.
+
+This result `(4 + (1 + 2)` (matching the first opening bracket and the first closing bracket) is wrong.
+
+This other result  `(4 + (1 + 2) / 3 - 5) * 10 / (3 + 2)` (matching the first opening bracket and the last closing bracket) is also wrong.
 
 Corresponding java code with `SubstringFinder`:
 
@@ -24,7 +39,64 @@ Corresponding java code with `SubstringFinder`:
 include::../src/test/java/fr/jmini/utils/substringfinder/SubstringFinderTest.java[tags=example]
 ----
 
-With the import `fr.jmini.utils.substringfinder.SubstringFinder`.
+Where `SubstringFinder` corresponds to this imported class: `fr.jmini.utils.substringfinder.SubstringFinder`.
+
+---
+
+Other example:
+
+Find the correct range defined `{` by `}` corresponding to the `main` method:
+
+----
+public static void main(String[] args) {
+    if(args != null) {
+        for (String s : args) {
+            printArg(s);
+        }
+    }
+}
+
+public static void printArg(String arg) {
+    System.out.println("Arg: " + arg);
+}
+----
+
+
+=== String outside a range example
+
+In following text, you want to find the comma `,` outside ranges defined by single quote `'`:
+
+----
+'Hello,world',5,true
+----
+
+The two correct matches are:
+
+* Between `"` and `5`
+* Between `5` and `t`
+
+The first comma should be ignored because it is between `'` and `'`.
+
+Corresponding java code with `PositionFinder`:
+
+[source,java,indent=0]
+----
+include::../src/test/java/fr/jmini/utils/substringfinder/PositionFinderTest.java[tags=example]
+----
+
+Where `PositionFinder` corresponds to this imported class: `fr.jmini.utils.substringfinder.PositionFinder`.
+
+---
+
+Other example:
+
+Find the world `video` that is not inside `<` and `>`:
+
+----
+This video: <video width="320" height="240" controls>
+  <source src="movie.mp4" type="video/mp4">
+</video>
+----
 
 === Build
 
@@ -43,14 +115,36 @@ Deploy to maven local:
 Build the documentation page:
 
 ----
-mvn verify
+./gradlew asciidoctor
 ----
 
 Upload the documentation page on GitHub pages:
 
 ----
-mvn exec:exec
+./gradlew gitPublishPush
 ----
+
+Perform a release:
+
+----
+./gradlew release -Prelease.useAutomaticVersion=true
+----
+
+==== Using ssh-agent
+
+Some tasks requires to push into the distant git repository (release task or updating the `gh-pages` branch).
+If they are failing with errors like this:
+----
+org.eclipse.jgit.api.errors.TransportException: ... Permission denied (publickey).
+---- 
+
+Then `ssh-agent` can be used.
+----
+eval `ssh-agent -s`
+ssh-add ~/.ssh/id_rsa
+----
+(link:https://superuser.com/a/990447/[source] for this approach)
+
 
 include::{github-readme}[tags=contact-section]
 

@@ -23,6 +23,21 @@ import org.junit.jupiter.api.Test;
 public class PositionFinderTest {
 
     @Test
+    public void testExample() {
+        // tag::example[]
+        String text = "'Hello,world',5,true";
+
+        PositionFinder finder = PositionFinder.define(",", "'", "'");
+        List<Integer> findPositions = finder.indexesOf(text);
+        assertEquals(2, findPositions.size(), "size");
+
+        assertEquals("'Hello,world'", text.substring(0, findPositions.get(0)));
+        assertEquals("5", text.substring(findPositions.get(0) + 1, findPositions.get(1)));
+        assertEquals("true", text.substring(findPositions.get(1) + 1));
+        // end::example[]
+    }
+
+    @Test
     public void testIndexesOf() {
         PositionFinder finder = PositionFinder.define("|", "{{", "}}");
         Collection<Integer> expected = Arrays.<Integer>asList(Integer.valueOf(5), Integer.valueOf(13));

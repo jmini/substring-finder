@@ -10,7 +10,6 @@
 package fr.jmini.utils.substringfinder;
 
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
@@ -29,14 +28,14 @@ public class PositionFinder {
         this.excludeSubstringFinder = SubstringFinder.define(excludeOpen, excludeClose);
     }
 
-    public Collection<Integer> indexesOf(String text) {
+    public List<Integer> indexesOf(String text) {
         return indexesOf(text, 0);
     }
 
-    public Collection<Integer> indexesOf(String text, int startAt) {
+    public List<Integer> indexesOf(String text, int startAt) {
         List<Integer> results = new ArrayList<Integer>();
         addResult(results, text, startAt);
-        return Collections.unmodifiableCollection(results);
+        return Collections.unmodifiableList(results);
     }
 
     private void addResult(List<Integer> results, String text, int startAt) {

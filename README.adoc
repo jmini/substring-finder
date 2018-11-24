@@ -15,7 +15,7 @@
 //tag::header[]
 = {project-name}
 :author: Jeremie Bresson
-:revnumber: 1.0.0
+:revnumber: {project-version}
 
 Java library for matching text ranges
 //end::header[]
@@ -23,19 +23,10 @@ Java library for matching text ranges
 //tag::description[]
 == Description
 
-Java library for matching text ranges (defined by a start string and an end string) that can be included in each other.
+Java library to find:
 
-Example, in following text, you want to match ranges that starts with `(` and ends with `)`:
-
-----
-5 + (4 + (1 + 2) / 3 - 5) * 10 / (3 + 2)
-----
-
-The first range is expected to be `(4 + (1 + 2) / 3 - 5)`.
-
-This result `(4 + (1 + 2)` (matching the first opening bracket and the first closing bracket) is wrong.
-
-This other result  `(4 + (1 + 2) / 3 - 5) * 10 / (3 + 2)` (matching the first opening bracket and the last closing bracket) is also wrong.
+* text ranges (defined by a start string and an end string) that can be included in each other.
+* specific string sequence outside a range.
 
 //end::description[]
 Read more on the link:{homepage}[project home page].
