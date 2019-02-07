@@ -528,8 +528,8 @@ table.CodeRay td.code>pre{padding:0}
 <h1>SubstringFinder</h1>
 <div class="details">
 <span id="author" class="author">Jeremie Bresson</span><br>
-<span id="revnumber">version 1.0.0,</span>
-<span id="revdate">2018-11-24</span>
+<span id="revnumber">version 1.0.1,</span>
+<span id="revdate">2019-02-07</span>
 </div>
 <div id="toc" class="toc2">
 <div id="toctitle">Table of Contents</div>
@@ -539,7 +539,13 @@ table.CodeRay td.code>pre{padding:0}
 <ul class="sectlevel2">
 <li><a href="#text-range-example">Text range example</a></li>
 <li><a href="#string-outside-a-range-example">String outside a range example</a></li>
-<li><a href="#build">Build</a></li>
+</ul>
+</li>
+<li><a href="#download">Download</a></li>
+<li><a href="#build">Build</a>
+<ul class="sectlevel2">
+<li><a href="#for-project-maintainers">For project maintainers</a></li>
+<li><a href="#using-ssh-agent">Using ssh-agent</a></li>
 </ul>
 </li>
 <li><a href="#get-in-touch">Get in touch</a></li>
@@ -565,9 +571,6 @@ table.CodeRay td.code>pre{padding:0}
 </li>
 <li>
 <p><a href="https://github.com/jmini/substring-finder">GitHub project</a></p>
-</li>
-<li>
-<p><a href="https://bintray.com/jmini/maven/substring-finder">Binaries on Bintray</a></p>
 </li>
 <li>
 <p><a href="https://github.com/jmini/substring-finder/issues">Issue tracker</a></p>
@@ -725,10 +728,34 @@ assertEquals(<span class="string"><span class="delimiter">&quot;</span><span cla
 </div>
 </div>
 </div>
-<div class="sect2">
-<h3 id="build">Build</h3>
+</div>
+</div>
+<div class="sect1">
+<h2 id="download">Download</h2>
+<div class="sectionbody">
 <div class="paragraph">
-<p>Build sources:</p>
+<p>Starting with version <code>1.0.1</code>, the library is hosted on maven central.</p>
+</div>
+<div class="listingblock">
+<div class="title">Maven coordinates of the library</div>
+<div class="content">
+<pre class="CodeRay highlight"><code data-lang="xml"><span class="tag">&lt;dependency&gt;</span>
+  <span class="tag">&lt;groupId&gt;</span>fr.jmini.utils<span class="tag">&lt;/groupId&gt;</span>
+  <span class="tag">&lt;artifactId&gt;</span>substring-finder<span class="tag">&lt;/artifactId&gt;</span>
+  <span class="tag">&lt;version&gt;</span>1.0.1<span class="tag">&lt;/version&gt;</span>
+<span class="tag">&lt;/dependency&gt;</span></code></pre>
+</div>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="build">Build</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>This project is using gradle.</p>
+</div>
+<div class="paragraph">
+<p>Command to build the sources locally:</p>
 </div>
 <div class="listingblock">
 <div class="content">
@@ -736,7 +763,7 @@ assertEquals(<span class="string"><span class="delimiter">&quot;</span><span cla
 </div>
 </div>
 <div class="paragraph">
-<p>Deploy to maven local:</p>
+<p>Command to deploy to your local maven repository:</p>
 </div>
 <div class="listingblock">
 <div class="content">
@@ -744,7 +771,7 @@ assertEquals(<span class="string"><span class="delimiter">&quot;</span><span cla
 </div>
 </div>
 <div class="paragraph">
-<p>Build the documentation page:</p>
+<p>Command to build the documentation page:</p>
 </div>
 <div class="listingblock">
 <div class="content">
@@ -752,7 +779,24 @@ assertEquals(<span class="string"><span class="delimiter">&quot;</span><span cla
 </div>
 </div>
 <div class="paragraph">
-<p>Upload the documentation page on GitHub pages:</p>
+<p>The output of this command is an HTML page located at <code>&lt;git repo root&gt;/build/docs/html5/index.html</code>.</p>
+</div>
+<div class="sect2">
+<h3 id="for-project-maintainers">For project maintainers</h3>
+<div class="paragraph">
+<p><code>signing.gnupg.keyName</code> and <code>signing.gnupg.passphrase</code> are expected to be set in your local <code>gradle.properties</code> file to be able to sign.
+<code>sonatypeUser</code> and <code>sonatypePassword</code> are expected to be set in order to be able to publish to a distant repository.</p>
+</div>
+<div class="paragraph">
+<p>Command to build and publish the result in a distant maven repository:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre>./gradlew publish</pre>
+</div>
+</div>
+<div class="paragraph">
+<p>Command to upload the documentation page on GitHub pages:</p>
 </div>
 <div class="listingblock">
 <div class="content">
@@ -760,15 +804,16 @@ assertEquals(<span class="string"><span class="delimiter">&quot;</span><span cla
 </div>
 </div>
 <div class="paragraph">
-<p>Perform a release:</p>
+<p>Command to perform a release:</p>
 </div>
 <div class="listingblock">
 <div class="content">
 <pre>./gradlew release -Prelease.useAutomaticVersion=true</pre>
 </div>
 </div>
-<div class="sect3">
-<h4 id="using-ssh-agent">Using ssh-agent</h4>
+</div>
+<div class="sect2">
+<h3 id="using-ssh-agent">Using ssh-agent</h3>
 <div class="paragraph">
 <p>Some tasks requires to push into the distant git repository (release task or updating the <code>gh-pages</code> branch).
 If they are failing with errors like this:</p>
@@ -789,7 +834,6 @@ ssh-add ~/.ssh/id_rsa</pre>
 </div>
 <div class="paragraph">
 <p>(<a href="https://superuser.com/a/990447/">source</a> for this approach)</p>
-</div>
 </div>
 </div>
 </div>
@@ -817,8 +861,8 @@ Documentation and slides are under the <a href="https://creativecommons.org/lice
 </div>
 <div id="footer">
 <div id="footer-text">
-Version 1.0.0<br>
-Last updated 2018-11-24 11:43:05 CET
+Version 1.0.1<br>
+Last updated 2019-02-07 07:21:35 CET
 </div>
 </div>
 </body>
