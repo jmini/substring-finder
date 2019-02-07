@@ -1,6 +1,7 @@
 plugins {
     id 'java-library'
     id 'maven-publish'
+    id 'signing'
     id 'org.asciidoctor.convert' version '1.5.9.1'
     id 'org.ajoberstar.git-publish' version '2.0.0'
     id 'net.researchgate.release' version '2.6.0'
@@ -26,12 +27,29 @@ task sourcesJar(type: Jar, dependsOn: classes) {
     from sourceSets.main.allSource
 }
 
+task javadocJar(type: Jar) {
+    from javadoc
+    classifier = 'javadoc'
+}
+
+artifacts {
+    archives jar
+    archives sourcesJar
+    archives javadocJar
+}
+
+signing {
+    useGpgCmd()
+    sign configurations.archives
+}
+
 publishing {
     publications {
         mavenJava(MavenPublication) {
             pom {
+                name = "$githubRepositoryName".toString()
                 description = 'Java library for matching text'
-                url = 'https://jmini.github.io/substring-finder/'
+                url = 'https://' + "$githubRepositoryOwner" + '.github.io/' + "$githubRepositoryName" + '/'
                 licenses {
                     license {
                         name = 'Eclipse Public License - v 2.0'
@@ -46,23 +64,56 @@ publishing {
                     }
                 }
                 scm {
-                    connection = 'scm:git:https://github.com/jmini/substring-finder.git'
-                    developerConnection = 'scm:git:https://github.com/jmini/substring-finder.git'
-                    url = 'https://github.com/jmini/substring-finder/'
+                    connection = 'scm:git:https://github.com/' + "$githubRepositoryOwner" + '/' + "$githubRepositoryName" + '.git'
+                    developerConnection = 'scm:git:https://github.com/' + "$githubRepositoryOwner" + '/' + "$githubRepositoryName" + '.git'
+                    url = 'https://github.com/' + "$githubRepositoryOwner" + '/' + "$githubRepositoryName" + '/'
                 }
             }
             from components.java
             artifact sourcesJar
+            artifact javadocJar
+
+            pom.withXml {
+                def pomFile = file("${project.buildDir}/generated-pom.xml")
+                writeTo(pomFile)
+                def pomAscFile = signing.sign(pomFile).signatureFiles[0]
+                artifact(pomAscFile) {
+                    classifier = null
+                    extension = 'pom.asc'
+                }
+                pomFile.delete()
+            }
+
+            project.tasks.signArchives.signatureFiles.each {
+                artifact(it) {
+                    def matcher = it.file =~ /-(sources|javadoc)\.jar\.asc$/
+                    if (matcher.find()) {
+                        classifier = matcher.group(1)
+                    } else {
+                        classifier = null
+                    }
+                    extension = 'jar.asc'
+                }
+            }
         }
     }
     repositories {
         maven {
-            url = mavenPublishUrl
+            url = version.endsWith('SNAPSHOT') ? mavenPublishUrlSnapshot : mavenPublishUrlRelease
             credentials {
-                username = project.findProperty("bintrayUser") ?: ""
-                password = project.findProperty("bintrayPassword") ?: ""
+                username = project.findProperty('sonatypeUser') ?: ''
+                password = project.findProperty('sonatypePassword') ?: ''
             }
         }
+    }
+}
+
+model {
+    tasks.publishMavenJavaPublicationToMavenLocal {
+        dependsOn(project.tasks.signArchives)
+    }
+    tasks.publishMavenJavaPublicationToMavenRepository {
+        dependsOn(project.tasks.signArchives)
     }
 }
 
@@ -76,6 +127,7 @@ asciidoctor {
     attributes \
         'revdate': "${buildDate()}",
         'project-version' : "$version",
+        'last-stable-version' : "$version",
         'source-highlighter': 'coderay',
         'imagesdir': '',
         'toc': 'left',
@@ -85,14 +137,8 @@ asciidoctor {
         'idseparator': '-',
         'docinfo1': 'true'
 
-    repositories {
-        maven {
-            url "http://dl.bintray.com/jmini/maven/"
-        }
-        jcenter()
-    }
     dependencies {
-        asciidoctor "com.bsiag.asciidoctorj:gh-edit:3.0.0"
+        asciidoctor "fr.jmini.asciidoctorj:git-link:3.0.0"
     }
 }
 

@@ -3,7 +3,6 @@
 include::{github-readme}[tags=vardef]
 
 :projectpage: https://github.com/{gh-repo-owner}/{gh-repo-name}
-:bintraypage: https://bintray.com/jmini/maven/substring-finder
 
 include::{github-readme}[tags=header]
 
@@ -11,7 +10,6 @@ include::{github-readme}[tags=header]
 
 * link:{homepage}[Project home] (this page)
 * link:{projectpage}[GitHub project]
-* link:{bintraypage}[Binaries on Bintray]
 * link:{issues}[Issue tracker]
 
 TIP: Do you want to improve this page? Please git-link:self[edit it on GitHub, edit].
@@ -98,39 +96,68 @@ This video: <video width="320" height="240" controls>
 </video>
 ----
 
-=== Build
+== Download
 
-Build sources:
+Starting with version `1.0.1`, the library is hosted on maven central.
+
+[source, xml, subs="verbatim,attributes"]
+.Maven coordinates of the library
+----
+<dependency>
+  <groupId>fr.jmini.utils</groupId>
+  <artifactId>substring-finder</artifactId>
+  <version>{last-stable-version}</version>
+</dependency>
+----
+
+== Build
+
+This project is using gradle.
+
+Command to build the sources locally:
 
 ----
 ./gradlew build
 ----
 
-Deploy to maven local:
+Command to deploy to your local maven repository:
 
 ----
 ./gradlew publishToMavenLocal
 ----
 
-Build the documentation page:
+Command to build the documentation page:
 
 ----
 ./gradlew asciidoctor
 ----
 
-Upload the documentation page on GitHub pages:
+The output of this command is an HTML page located at `<git repo root>/build/docs/html5/index.html`.
+
+=== For project maintainers
+
+`signing.gnupg.keyName` and `signing.gnupg.passphrase` are expected to be set in your local `gradle.properties` file to be able to sign.
+`sonatypeUser` and `sonatypePassword` are expected to be set in order to be able to publish to a distant repository.
+					
+Command to build and publish the result in a distant maven repository:
+
+----
+./gradlew publish
+----
+
+Command to upload the documentation page on GitHub pages:
 
 ----
 ./gradlew gitPublishPush
 ----
 
-Perform a release:
+Command to perform a release:
 
 ----
 ./gradlew release -Prelease.useAutomaticVersion=true
 ----
 
-==== Using ssh-agent
+=== Using ssh-agent
 
 Some tasks requires to push into the distant git repository (release task or updating the `gh-pages` branch).
 If they are failing with errors like this:
