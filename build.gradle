@@ -127,7 +127,7 @@ asciidoctor {
     attributes \
         'revdate': "${buildDate()}",
         'project-version' : "$version",
-        'last-stable-version' : "$version",
+        'last-stable-version' : "$lastVersion",
         'source-highlighter': 'coderay',
         'imagesdir': '',
         'toc': 'left',
