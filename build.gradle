@@ -49,6 +49,7 @@ publishing {
             pom {
                 name = "$githubRepositoryName".toString()
                 description = 'Java library for matching text'
+                packaging = 'jar'
                 url = 'https://' + "$githubRepositoryOwner" + '.github.io/' + "$githubRepositoryName" + '/'
                 licenses {
                     license {
