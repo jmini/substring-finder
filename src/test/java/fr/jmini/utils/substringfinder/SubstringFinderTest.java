@@ -11,6 +11,7 @@ package fr.jmini.utils.substringfinder;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
+import java.util.List;
 import java.util.Optional;
 
 import org.junit.jupiter.api.Test;
@@ -57,8 +58,7 @@ public class SubstringFinderTest {
 
     private static final ExpectedRange TEST1_NONE = new ExpectedRange(-1, -1);
 
-    @Test
-    public void testNextRange1() {
+    private void prerequisites1() {
         // Verify that the constant are well defined:
         verifyPos(TEST1_POS1, TEST1_VALUE, ".");
         verifyPos(TEST1_POS2, TEST1_VALUE, "");
@@ -67,6 +67,11 @@ public class SubstringFinderTest {
         verifyPos(TEST1_POS5, TEST1_VALUE, ".[::[']:]..");
         verifyPos(TEST1_POS6, TEST1_VALUE, "::[']:");
         verifyPos(TEST1_POS7, TEST1_VALUE, "'");
+    }
+
+    @Test
+    public void testNextRange1() {
+        prerequisites1();
 
         // Test the function nextRange(..) for each position:
         SubstringFinder sf = SubstringFinder.define("[", "]");
@@ -95,6 +100,32 @@ public class SubstringFinderTest {
         assertStartEndEquals(TEST1_NONE, sf, sf.nextRange(TEST1_VALUE, 24));
         assertStartEndEquals(TEST1_NONE, sf, sf.nextRange(TEST1_VALUE, 25));
         assertStartEndEquals(TEST1_NONE, sf, sf.nextRange(TEST1_VALUE, 200));
+    }
+
+    @Test
+    public void testFindAll1() {
+        prerequisites1();
+
+        SubstringFinder sf = SubstringFinder.define("[", "]");
+
+        // Test without including nested:
+        List<Range> list1 = sf.findAll(TEST1_VALUE, false);
+        assertEquals(4, list1.size());
+        assertStartEndEquals(TEST1_POS1, sf, list1.get(0));
+        assertStartEndEquals(TEST1_POS2, sf, list1.get(1));
+        assertStartEndEquals(TEST1_POS3, sf, list1.get(2));
+        assertStartEndEquals(TEST1_POS5, sf, list1.get(3));
+
+        // Test with nested:
+        List<Range> list2 = sf.findAll(TEST1_VALUE, true);
+        assertEquals(7, list2.size());
+        assertStartEndEquals(TEST1_POS1, sf, list2.get(0));
+        assertStartEndEquals(TEST1_POS2, sf, list2.get(1));
+        assertStartEndEquals(TEST1_POS3, sf, list2.get(2));
+        assertStartEndEquals(TEST1_POS4, sf, list2.get(3));
+        assertStartEndEquals(TEST1_POS5, sf, list2.get(4));
+        assertStartEndEquals(TEST1_POS6, sf, list2.get(5));
+        assertStartEndEquals(TEST1_POS7, sf, list2.get(6));
     }
 
     private static final String TEST2_VALUE = "xxx{{ooo}}xxx{{zzz{{www}}zzz{{vv}}z}}xxxxxx{{sss{{uuu{{aa}}uuu}}ss}}xxx";
@@ -243,18 +274,22 @@ public class SubstringFinderTest {
         if (expected.contentStart < 0 && expected.contentEnd < 0) {
             assertEquals(false, actual.isPresent(), "range is present");
         } else {
-            int expectedContentStart = expected.contentStart;
-            int expectedContentEnd = expected.contentEnd;
-            int expectedRangeStart = expectedContentStart - sf.getOpenLength();
-            int expectedRangeEnd = expectedContentEnd + sf.getCloseLength();
-
             assertEquals(true, actual.isPresent(), "range is present");
             Range range = actual.get();
-            assertEquals(expectedContentStart, range.getContentStart(), "content start");
-            assertEquals(expectedContentEnd, range.getContentEnd(), "content end");
-            assertEquals(expectedRangeStart, range.getRangeStart(), "range start");
-            assertEquals(expectedRangeEnd, range.getRangeEnd(), "range end");
+            assertStartEndEquals(expected, sf, range);
         }
+    }
+
+    private static void assertStartEndEquals(ExpectedRange expected, SubstringFinder sf, Range actual) {
+        int expectedContentStart = expected.contentStart;
+        int expectedContentEnd = expected.contentEnd;
+        int expectedRangeStart = expectedContentStart - sf.getOpenLength();
+        int expectedRangeEnd = expectedContentEnd + sf.getCloseLength();
+
+        assertEquals(expectedContentStart, actual.getContentStart(), "content start");
+        assertEquals(expectedContentEnd, actual.getContentEnd(), "content end");
+        assertEquals(expectedRangeStart, actual.getRangeStart(), "range start");
+        assertEquals(expectedRangeEnd, actual.getRangeEnd(), "range end");
     }
 
     private static void verifyPos(ExpectedRange range, String value, String expected) {

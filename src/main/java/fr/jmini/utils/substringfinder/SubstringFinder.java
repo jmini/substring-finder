@@ -9,6 +9,9 @@
  *******************************************************************************/
 package fr.jmini.utils.substringfinder;
 
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
 import java.util.Optional;
 
 public class SubstringFinder {
@@ -23,6 +26,18 @@ public class SubstringFinder {
 
     public static SubstringFinder define(String targetOpen, String targetClose) {
         return new SubstringFinder(targetOpen, targetClose);
+    }
+
+    public List<Range> findAll(String text, boolean includeNested) {
+        List<Range> all = new ArrayList<>();
+        Optional<Range> find = nextRange(text);
+        while (find.isPresent()) {
+            Range r = find.get();
+            all.add(r);
+            int startAt = (includeNested) ? r.getContentStart() : r.getRangeEnd();
+            find = nextRange(text, startAt);
+        }
+        return Collections.unmodifiableList(all);
     }
 
     public Optional<Range> nextRange(String text) {
