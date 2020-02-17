@@ -20,6 +20,8 @@
 Java library for matching text ranges
 //end::header[]
 
+image:https://circleci.com/gh/{gh-repo-owner}/{gh-repo-name}.svg?style=svg["CircleCI", link="https://circleci.com/gh/{gh-repo-owner}/{gh-repo-name}"]
+
 //tag::description[]
 == Description
 
