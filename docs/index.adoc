@@ -60,17 +60,19 @@ public static void printArg(String arg) {
 ----
 
 
-=== String outside a range example
+=== String positions outside a range
+
+==== First example
 
 In following text, you want to find the comma `,` outside ranges defined by single quote `'`:
 
 ----
-'Hello,world',5,true
+include::../src/test/resources/testExampleIndexesOf.txt[]
 ----
 
 The two correct matches are:
 
-* Between `"` and `5`
+* Between `'` and `5`
 * Between `5` and `t`
 
 The first comma should be ignored because it is between `'` and `'`.
@@ -79,22 +81,38 @@ Corresponding java code with `PositionFinder`:
 
 [source,java,indent=0]
 ----
-include::../src/test/java/fr/jmini/utils/substringfinder/PositionFinderTest.java[tags=example]
+include::../src/test/java/fr/jmini/utils/substringfinder/PositionFinderTest.java[tags=indexesOf]
 ----
 
 Where `PositionFinder` corresponds to this imported class: `fr.jmini.utils.substringfinder.PositionFinder`.
 
----
-
-Other example:
+==== Second example
 
 Find the world `video` that is not inside `<` and `>`:
 
+[source, html]
 ----
 This video: <video width="320" height="240" controls>
   <source src="movie.mp4" type="video/mp4">
 </video>
 ----
+
+=== First position outside a range
+
+Similar to the previous example, if you are only interested by the first position of the `,` outside `(` and `)`:
+
+----
+include::../src/test/resources/testExampleIndexOf.txt[]
+----
+
+Corresponding java code with `PositionFinder`:
+
+[source,java,indent=0]
+----
+include::../src/test/java/fr/jmini/utils/substringfinder/PositionFinderTest.java[tags=indexOf]
+----
+
+Where `PositionFinder` corresponds to this imported class: `fr.jmini.utils.substringfinder.PositionFinder`.
 
 == Download
 

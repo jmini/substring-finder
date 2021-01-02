@@ -10,6 +10,8 @@
 package fr.jmini.utils.substringfinder;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.junit.jupiter.api.Assertions.fail;
 
 import java.util.Arrays;
@@ -17,16 +19,21 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Optional;
 
 import org.junit.jupiter.api.Test;
 
 public class PositionFinderTest {
 
     @Test
-    public void testExample() {
-        // tag::example[]
+    public void testExampleIndexesOf() throws Exception {
+        // tag::indexesOf[]
         String text = "'Hello,world',5,true";
 
+        // end::indexOf[]
+        TestUtil.checkInputInFile("testExampleIndexesOf.txt", text);
+
+        // tag::indexOf[]
         PositionFinder finder = PositionFinder.define(",", "'", "'");
         List<Integer> findPositions = finder.indexesOf(text);
         assertEquals(2, findPositions.size(), "size");
@@ -34,7 +41,25 @@ public class PositionFinderTest {
         assertEquals("'Hello,world'", text.substring(0, findPositions.get(0)));
         assertEquals("5", text.substring(findPositions.get(0) + 1, findPositions.get(1)));
         assertEquals("true", text.substring(findPositions.get(1) + 1));
-        // end::example[]
+        // end::indexesOf[]
+    }
+
+    @Test
+    public void testExampleIndexOf() throws Exception {
+        // tag::indexOf[]
+        String text = "lorem(Hello,world),ipsum";
+
+        // end::indexOf[]
+        TestUtil.checkInputInFile("testExampleIndexOf.txt", text);
+
+        // tag::indexOf[]
+        PositionFinder finder = PositionFinder.define(",", "(", ")");
+        Optional<Integer> findPosition = finder.indexOf(text);
+        assertEquals(true, findPosition.isPresent(), "isPresent");
+
+        assertEquals("lorem(Hello,world)", text.substring(0, findPosition.get()));
+        assertEquals("ipsum", text.substring(findPosition.get() + 1));
+        // end::indexOf[]
     }
 
     @Test
@@ -55,9 +80,11 @@ public class PositionFinderTest {
     }
 
     @Test
-    public void testIndexesOfSingleMatch() {
+    public void testSingleMatch() {
         singeltonFind("|foobaz");
+        singeltonFind("|f{{b}}");
         singeltonFind("foobaz|");
+        singeltonFind("{{o}}z|");
         singeltonFind("foo|baz");
         singeltonFind("{{foo|baz");
         singeltonFind("fo{{o|baz");
@@ -70,10 +97,32 @@ public class PositionFinderTest {
     }
 
     private void singeltonFind(String input) {
+        Integer expectedPosition = Integer.valueOf(input.indexOf("|"));
         PositionFinder finder = PositionFinder.define("|", "{{", "}}");
+        Optional<Integer> find = finder.indexOf(input);
+        assertTrue(find.isPresent());
+        assertEquals(expectedPosition, find.get());
         Collection<Integer> positions = finder.indexesOf(input);
-        List<Integer> expected = Collections.singletonList(Integer.valueOf(input.indexOf("|")));
+        List<Integer> expected = Collections.singletonList(expectedPosition);
         assertListEquals(expected, positions);
+    }
+
+    @Test
+    public void testNoMatches() {
+        noMatch("foo bar", 0);
+        noMatch("foo () bar", 0);
+        noMatch("foo ( test ) bar", 0);
+        noMatch("foo ( , ) bar", 0);
+        noMatch(", bar", 2);
+        noMatch("( , ) bar", 5);
+    }
+
+    private void noMatch(String input, int startAt) {
+        PositionFinder finder = PositionFinder.define(",", "(", ")");
+        Optional<Integer> find = finder.indexOf(input, startAt);
+        assertFalse(find.isPresent());
+        List<Integer> positions = finder.indexesOf(input, startAt);
+        assertTrue(positions.isEmpty());
     }
 
     private static void assertListEquals(Collection<Integer> expected, Collection<Integer> actual) {
