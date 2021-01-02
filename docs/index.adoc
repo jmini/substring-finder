@@ -16,12 +16,14 @@ TIP: Do you want to improve this page? Please git-link:self[edit it on GitHub, e
 
 include::{github-readme}[tags=description]
 
-=== Text range example
+=== Text range
+
+==== First example
 
 In following text, you want to match ranges that starts with `(` and ends with `)`:
 
 ----
-5 + (4 + (1 + 2) / 3 - 5) * 10 / (3 + 2)
+include::../src/test/resources/testExample.txt[]
 ----
 
 The first range is expected to be `(4 + (1 + 2) / 3 - 5)`.
@@ -39,12 +41,11 @@ include::../src/test/java/fr/jmini/utils/substringfinder/SubstringFinderTest.jav
 
 Where `SubstringFinder` corresponds to this imported class: `fr.jmini.utils.substringfinder.SubstringFinder`.
 
----
-
-Other example:
+==== Second example
 
 Find the correct range defined `{` by `}` corresponding to the `main` method:
 
+[source, java]
 ----
 public static void main(String[] args) {
     if(args != null) {
@@ -59,6 +60,26 @@ public static void printArg(String arg) {
 }
 ----
 
+==== Exclude an other range
+
+Consider this example:
+
+[source, java]
+----
+include::../src/test/resources/testWithExlude.txt[]
+----
+
+If you would like to find the content of the `@SomeAnnotation` value, you can define your range like this: 
+
+* start: `@SomeAnnotation(` 
+* end `)`
+
+But in this case you also need to exclude the content between the quotes (`"` .. `"`), in order to not match the end of the range with the `:-)` in the String.
+
+[source,java,indent=0]
+----
+include::../src/test/java/fr/jmini/utils/substringfinder/SubstringFinderTest.java[tags=exclude]
+----
 
 === String positions outside a range
 

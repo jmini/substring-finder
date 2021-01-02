@@ -19,13 +19,23 @@ public class SubstringFinder {
 
     private final String targetClose;
 
-    private SubstringFinder(String targetOpen, String targetClose) {
+    private final String excludeOpen;
+
+    private final String excludeClose;
+
+    private SubstringFinder(String targetOpen, String targetClose, String excludeOpen, String excludeClose) {
         this.targetOpen = targetOpen;
         this.targetClose = targetClose;
+        this.excludeOpen = excludeOpen;
+        this.excludeClose = excludeClose;
     }
 
     public static SubstringFinder define(String targetOpen, String targetClose) {
-        return new SubstringFinder(targetOpen, targetClose);
+        return new SubstringFinder(targetOpen, targetClose, null, null);
+    }
+
+    public static SubstringFinder define(String targetOpen, String targetClose, String excludeOpen, String excludeClose) {
+        return new SubstringFinder(targetOpen, targetClose, excludeOpen, excludeClose);
     }
 
     public List<Range> findAll(String text, boolean includeNested) {
@@ -49,7 +59,7 @@ public class SubstringFinder {
     }
 
     public Optional<Range> nextRange(String text, int startAt, int endAt) {
-        int rangeStartIndex = text.indexOf(targetOpen, startAt);
+        int rangeStartIndex = findIndex(text, targetOpen, startAt);
         if (rangeStartIndex > -1 && rangeStartIndex < endAt) {
             return computeCloseIndexAndCreateRange(text, rangeStartIndex, rangeStartIndex + targetOpen.length());
         }
@@ -57,7 +67,7 @@ public class SubstringFinder {
     }
 
     private Optional<Range> computeCloseIndexAndCreateRange(String text, int rangeStartIndex, int startAt) {
-        int closeIndex = text.indexOf(targetClose, startAt);
+        int closeIndex = findIndex(text, targetClose, startAt);
         Optional<Range> findNextRange = nextRange(text, startAt, closeIndex);
 
         if (findNextRange.isPresent()) {
@@ -81,6 +91,18 @@ public class SubstringFinder {
         }
 
         return Optional.empty();
+    }
+
+    private int findIndex(String text, String search, int startAt) {
+        if (excludeOpen != null && excludeClose != null) {
+            PositionFinder finder = PositionFinder.define(search, excludeOpen, excludeClose);
+            Optional<Integer> indexOf = finder.indexOf(text, startAt);
+            if (indexOf.isPresent()) {
+                return indexOf.get();
+            }
+            return -1;
+        }
+        return text.indexOf(search, startAt);
     }
 
     private Range createRange(int rangeStart, int contentEnd) {

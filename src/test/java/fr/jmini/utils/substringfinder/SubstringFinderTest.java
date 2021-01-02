@@ -11,6 +11,7 @@ package fr.jmini.utils.substringfinder;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
+import java.io.IOException;
 import java.util.List;
 import java.util.Optional;
 
@@ -19,10 +20,14 @@ import org.junit.jupiter.api.Test;
 public class SubstringFinderTest {
 
     @Test
-    public void testExample() {
+    public void testExample() throws IOException {
         // tag::example[]
         String text = "5 + (4 + (1 + 2) / 3 - 5) * 10 / (3 + 2)";
 
+        // end::example[]
+        TestUtil.checkInputInFile("testExample.txt", text);
+
+        // tag::example[]
         SubstringFinder finder = SubstringFinder.define("(", ")");
         Optional<Range> findRange = finder.nextRange(text);
         if (findRange.isPresent()) {
@@ -38,6 +43,30 @@ public class SubstringFinderTest {
         SubstringFinder sf = SubstringFinder.define("[", "]");
         Optional<Range> find = sf.nextRange("abcdef", 0);
         assertEquals(false, find.isPresent(), "range is present");
+    }
+
+    @Test
+    public void testWithExlude() throws Exception {
+        // tag::exclude[]
+        String text = ""
+                + "package tmp;\n"
+                + " \n"
+                + "@SomeAnnotation(arg1=\"value ;-)\", arg2=\"other value\")\n"
+                + "public class SomeClass {\n"
+                + "}\n";
+
+        // end::exclude[]
+        TestUtil.checkInputInFile("testWithExlude.txt", text);
+
+        // tag::exclude[]
+        SubstringFinder finder = SubstringFinder.define("@SomeAnnotation(", ")", "\"", "\"");
+        Optional<Range> findRange = finder.nextRange(text);
+        if (findRange.isPresent()) {
+            Range range = findRange.get();
+            String substring = text.substring(range.getRangeStart(), range.getRangeEnd());
+            assertEquals("@SomeAnnotation(arg1=\"value ;-)\", arg2=\"other value\")", substring);
+        }
+        // end::exclude[]
     }
 
     private static final String TEST1_VALUE = "[.]x[]xx[[]..]xx[.[::[']:]..]x";
