@@ -23,6 +23,12 @@ wrapper {
 
 group = 'fr.jmini.utils'
 
+java {
+    toolchain {
+        languageVersion = JavaLanguageVersion.of(8)
+    }
+}
+
 repositories {
     jcenter()
 }
