@@ -1,0 +1,5 @@
+package tmp;
+ 
+@SomeAnnotation(arg1="value ;-)", arg2="other value")
+public class SomeClass {
+}
