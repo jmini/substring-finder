@@ -54,10 +54,40 @@ public class PositionFinder {
     }
 
     private void addResult(List<Integer> results, String text, int startAt, int stopBefore) {
-        int index = text.indexOf(target, startAt);
-        while (index > -1 && index < stopBefore) {
-            results.add(Integer.valueOf(index));
-            index = text.indexOf(target, index + target.length());
+        Optional<Integer> find = findIndexOf(text, startAt, stopBefore);
+        while (find.isPresent()) {
+            Integer index = find.get();
+            results.add(index);
+            find = findIndexOf(text, index + target.length(), stopBefore);
         }
+    }
+
+    public Optional<Integer> indexOf(String text) {
+        return indexOf(text, 0);
+    }
+
+    public Optional<Integer> indexOf(String text, int startAt) {
+        Optional<Range> findExclude = excludeSubstringFinder.nextRange(text, startAt);
+        if (findExclude.isPresent()) {
+            Range exclude = findExclude.get();
+            if (exclude.getContentStart() > startAt) {
+                Optional<Integer> find = findIndexOf(text, startAt, exclude.getContentStart());
+                if (find.isPresent()) {
+                    return find;
+                }
+                return findIndexOf(text, exclude.getRangeEnd(), text.length());
+            } else {
+                return findIndexOf(text, startAt, text.length());
+            }
+        }
+        return findIndexOf(text, startAt, text.length());
+    }
+
+    private Optional<Integer> findIndexOf(String text, int startAt, int stopBefore) {
+        int index = text.indexOf(target, startAt);
+        if (index > -1 && index < stopBefore) {
+            return Optional.of(Integer.valueOf(index));
+        }
+        return Optional.empty();
     }
 }
