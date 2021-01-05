@@ -670,8 +670,6 @@ Optional&lt;Range&gt; findRange = finder.nextRange(text);
 <div class="content">
 <pre class="CodeRay highlight"><code data-lang="java"><span class="predefined-type">String</span> text = <span class="string"><span class="delimiter">&quot;</span><span class="content">'Hello,world',5,true</span><span class="delimiter">&quot;</span></span>;
 
-TestUtil.checkInputInFile(<span class="string"><span class="delimiter">&quot;</span><span class="content">testExampleIndexesOf.txt</span><span class="delimiter">&quot;</span></span>, text);
-
 PositionFinder finder = PositionFinder.define(<span class="string"><span class="delimiter">&quot;</span><span class="content">,</span><span class="delimiter">&quot;</span></span>, <span class="string"><span class="delimiter">&quot;</span><span class="content">'</span><span class="delimiter">&quot;</span></span>, <span class="string"><span class="delimiter">&quot;</span><span class="content">'</span><span class="delimiter">&quot;</span></span>);
 <span class="predefined-type">List</span>&lt;<span class="predefined-type">Integer</span>&gt; findPositions = finder.indexesOf(text);
 assertEquals(<span class="integer">2</span>, findPositions.size(), <span class="string"><span class="delimiter">&quot;</span><span class="content">size</span><span class="delimiter">&quot;</span></span>);
@@ -714,116 +712,14 @@ assertEquals(<span class="string"><span class="delimiter">&quot;</span><span cla
 </div>
 <div class="listingblock">
 <div class="content">
-<pre class="CodeRay highlight"><code data-lang="java">        PositionFinder finder = PositionFinder.define(<span class="string"><span class="delimiter">&quot;</span><span class="content">,</span><span class="delimiter">&quot;</span></span>, <span class="string"><span class="delimiter">&quot;</span><span class="content">'</span><span class="delimiter">&quot;</span></span>, <span class="string"><span class="delimiter">&quot;</span><span class="content">'</span><span class="delimiter">&quot;</span></span>);
-        <span class="predefined-type">List</span>&lt;<span class="predefined-type">Integer</span>&gt; findPositions = finder.indexesOf(text);
-        assertEquals(<span class="integer">2</span>, findPositions.size(), <span class="string"><span class="delimiter">&quot;</span><span class="content">size</span><span class="delimiter">&quot;</span></span>);
+<pre class="CodeRay highlight"><code data-lang="java"><span class="predefined-type">String</span> text = <span class="string"><span class="delimiter">&quot;</span><span class="content">lorem(Hello,world),ipsum</span><span class="delimiter">&quot;</span></span>;
 
-        assertEquals(<span class="string"><span class="delimiter">&quot;</span><span class="content">'Hello,world'</span><span class="delimiter">&quot;</span></span>, text.substring(<span class="integer">0</span>, findPositions.get(<span class="integer">0</span>)));
-        assertEquals(<span class="string"><span class="delimiter">&quot;</span><span class="content">5</span><span class="delimiter">&quot;</span></span>, text.substring(findPositions.get(<span class="integer">0</span>) + <span class="integer">1</span>, findPositions.get(<span class="integer">1</span>)));
-        assertEquals(<span class="string"><span class="delimiter">&quot;</span><span class="content">true</span><span class="delimiter">&quot;</span></span>, text.substring(findPositions.get(<span class="integer">1</span>) + <span class="integer">1</span>));
-    }
+PositionFinder finder = PositionFinder.define(<span class="string"><span class="delimiter">&quot;</span><span class="content">,</span><span class="delimiter">&quot;</span></span>, <span class="string"><span class="delimiter">&quot;</span><span class="content">(</span><span class="delimiter">&quot;</span></span>, <span class="string"><span class="delimiter">&quot;</span><span class="content">)</span><span class="delimiter">&quot;</span></span>);
+Optional&lt;<span class="predefined-type">Integer</span>&gt; findPosition = finder.indexOf(text);
+assertEquals(<span class="predefined-constant">true</span>, findPosition.isPresent(), <span class="string"><span class="delimiter">&quot;</span><span class="content">isPresent</span><span class="delimiter">&quot;</span></span>);
 
-    <span class="annotation">@Test</span>
-    <span class="directive">public</span> <span class="type">void</span> testExampleIndexOf() <span class="directive">throws</span> <span class="exception">Exception</span> {
-        <span class="predefined-type">String</span> text = <span class="string"><span class="delimiter">&quot;</span><span class="content">lorem(Hello,world),ipsum</span><span class="delimiter">&quot;</span></span>;
-
-        TestUtil.checkInputInFile(<span class="string"><span class="delimiter">&quot;</span><span class="content">testExampleIndexOf.txt</span><span class="delimiter">&quot;</span></span>, text);
-
-        PositionFinder finder = PositionFinder.define(<span class="string"><span class="delimiter">&quot;</span><span class="content">,</span><span class="delimiter">&quot;</span></span>, <span class="string"><span class="delimiter">&quot;</span><span class="content">(</span><span class="delimiter">&quot;</span></span>, <span class="string"><span class="delimiter">&quot;</span><span class="content">)</span><span class="delimiter">&quot;</span></span>);
-        Optional&lt;<span class="predefined-type">Integer</span>&gt; findPosition = finder.indexOf(text);
-        assertEquals(<span class="predefined-constant">true</span>, findPosition.isPresent(), <span class="string"><span class="delimiter">&quot;</span><span class="content">isPresent</span><span class="delimiter">&quot;</span></span>);
-
-        assertEquals(<span class="string"><span class="delimiter">&quot;</span><span class="content">lorem(Hello,world)</span><span class="delimiter">&quot;</span></span>, text.substring(<span class="integer">0</span>, findPosition.get()));
-        assertEquals(<span class="string"><span class="delimiter">&quot;</span><span class="content">ipsum</span><span class="delimiter">&quot;</span></span>, text.substring(findPosition.get() + <span class="integer">1</span>));
-    }
-
-    <span class="annotation">@Test</span>
-    <span class="directive">public</span> <span class="type">void</span> testIndexesOf() {
-        PositionFinder finder = PositionFinder.define(<span class="string"><span class="delimiter">&quot;</span><span class="content">|</span><span class="delimiter">&quot;</span></span>, <span class="string"><span class="delimiter">&quot;</span><span class="content">{{</span><span class="delimiter">&quot;</span></span>, <span class="string"><span class="delimiter">&quot;</span><span class="content">}}</span><span class="delimiter">&quot;</span></span>);
-        <span class="predefined-type">Collection</span>&lt;<span class="predefined-type">Integer</span>&gt; expected = <span class="predefined-type">Arrays</span>.&lt;<span class="predefined-type">Integer</span>&gt;asList(<span class="predefined-type">Integer</span>.valueOf(<span class="integer">5</span>), <span class="predefined-type">Integer</span>.valueOf(<span class="integer">13</span>));
-        assertListEquals(expected, finder.indexesOf(<span class="string"><span class="delimiter">&quot;</span><span class="content">foooo|baaaaar|baz</span><span class="delimiter">&quot;</span></span>));
-        assertListEquals(expected, finder.indexesOf(<span class="string"><span class="delimiter">&quot;</span><span class="content">foooo|b{{a}}r|baz</span><span class="delimiter">&quot;</span></span>));
-        assertListEquals(expected, finder.indexesOf(<span class="string"><span class="delimiter">&quot;</span><span class="content">f{{}}|baaaaar|baz</span><span class="delimiter">&quot;</span></span>));
-        assertListEquals(expected, finder.indexesOf(<span class="string"><span class="delimiter">&quot;</span><span class="content">f{{}}|b{{a}}r|baz</span><span class="delimiter">&quot;</span></span>));
-        assertListEquals(expected, finder.indexesOf(<span class="string"><span class="delimiter">&quot;</span><span class="content">f{{}}|{{a|x}}|baz</span><span class="delimiter">&quot;</span></span>));
-        assertListEquals(expected, finder.indexesOf(<span class="string"><span class="delimiter">&quot;</span><span class="content">foooo|{{a|x}}|baz{{zz{{a|b}}zzz|x}}</span><span class="delimiter">&quot;</span></span>));
-        assertListEquals(<span class="predefined-type">Collections</span>.singletonList(<span class="predefined-type">Integer</span>.valueOf(<span class="integer">3</span>)), finder.indexesOf(<span class="string"><span class="delimiter">&quot;</span><span class="content">foo|b{{ar|ba}}z</span><span class="delimiter">&quot;</span></span>));
-        assertListEquals(<span class="predefined-type">Collections</span>.singletonList(<span class="predefined-type">Integer</span>.valueOf(<span class="integer">3</span>)), finder.indexesOf(<span class="string"><span class="delimiter">&quot;</span><span class="content">foo|b{{ar|bax|x}}xxx</span><span class="delimiter">&quot;</span></span>));
-        <span class="predefined-type">Collection</span>&lt;<span class="predefined-type">Integer</span>&gt; expected2 = <span class="predefined-type">Arrays</span>.&lt;<span class="predefined-type">Integer</span>&gt;asList(<span class="predefined-type">Integer</span>.valueOf(<span class="integer">3</span>), <span class="predefined-type">Integer</span>.valueOf(<span class="integer">20</span>));
-        assertListEquals(expected2, finder.indexesOf(<span class="string"><span class="delimiter">&quot;</span><span class="content">foo|b{{ar|bax|e}}xxx|xx</span><span class="delimiter">&quot;</span></span>));
-        assertListEquals(expected2, finder.indexesOf(<span class="string"><span class="delimiter">&quot;</span><span class="content">foo|b{{ar|bax|e}}xxx|xx{{aa{{r|b}}ax|e}}</span><span class="delimiter">&quot;</span></span>));
-    }
-
-    <span class="annotation">@Test</span>
-    <span class="directive">public</span> <span class="type">void</span> testSingleMatch() {
-        singeltonFind(<span class="string"><span class="delimiter">&quot;</span><span class="content">|foobaz</span><span class="delimiter">&quot;</span></span>);
-        singeltonFind(<span class="string"><span class="delimiter">&quot;</span><span class="content">|f{{b}}</span><span class="delimiter">&quot;</span></span>);
-        singeltonFind(<span class="string"><span class="delimiter">&quot;</span><span class="content">foobaz|</span><span class="delimiter">&quot;</span></span>);
-        singeltonFind(<span class="string"><span class="delimiter">&quot;</span><span class="content">{{o}}z|</span><span class="delimiter">&quot;</span></span>);
-        singeltonFind(<span class="string"><span class="delimiter">&quot;</span><span class="content">foo|baz</span><span class="delimiter">&quot;</span></span>);
-        singeltonFind(<span class="string"><span class="delimiter">&quot;</span><span class="content">{{foo|baz</span><span class="delimiter">&quot;</span></span>);
-        singeltonFind(<span class="string"><span class="delimiter">&quot;</span><span class="content">fo{{o|baz</span><span class="delimiter">&quot;</span></span>);
-        singeltonFind(<span class="string"><span class="delimiter">&quot;</span><span class="content">}}foo|baz</span><span class="delimiter">&quot;</span></span>);
-        singeltonFind(<span class="string"><span class="delimiter">&quot;</span><span class="content">fo}}o|baz</span><span class="delimiter">&quot;</span></span>);
-        singeltonFind(<span class="string"><span class="delimiter">&quot;</span><span class="content">foo|baz}}</span><span class="delimiter">&quot;</span></span>);
-        singeltonFind(<span class="string"><span class="delimiter">&quot;</span><span class="content">foo|b}}az</span><span class="delimiter">&quot;</span></span>);
-        singeltonFind(<span class="string"><span class="delimiter">&quot;</span><span class="content">foo|baz{{</span><span class="delimiter">&quot;</span></span>);
-        singeltonFind(<span class="string"><span class="delimiter">&quot;</span><span class="content">foo|b{{az</span><span class="delimiter">&quot;</span></span>);
-    }
-
-    <span class="directive">private</span> <span class="type">void</span> singeltonFind(<span class="predefined-type">String</span> input) {
-        <span class="predefined-type">Integer</span> expectedPosition = <span class="predefined-type">Integer</span>.valueOf(input.indexOf(<span class="string"><span class="delimiter">&quot;</span><span class="content">|</span><span class="delimiter">&quot;</span></span>));
-        PositionFinder finder = PositionFinder.define(<span class="string"><span class="delimiter">&quot;</span><span class="content">|</span><span class="delimiter">&quot;</span></span>, <span class="string"><span class="delimiter">&quot;</span><span class="content">{{</span><span class="delimiter">&quot;</span></span>, <span class="string"><span class="delimiter">&quot;</span><span class="content">}}</span><span class="delimiter">&quot;</span></span>);
-        Optional&lt;<span class="predefined-type">Integer</span>&gt; find = finder.indexOf(input);
-        assertTrue(find.isPresent());
-        assertEquals(expectedPosition, find.get());
-        <span class="predefined-type">Collection</span>&lt;<span class="predefined-type">Integer</span>&gt; positions = finder.indexesOf(input);
-        <span class="predefined-type">List</span>&lt;<span class="predefined-type">Integer</span>&gt; expected = <span class="predefined-type">Collections</span>.singletonList(expectedPosition);
-        assertListEquals(expected, positions);
-    }
-
-    <span class="annotation">@Test</span>
-    <span class="directive">public</span> <span class="type">void</span> testNoMatches() {
-        noMatch(<span class="string"><span class="delimiter">&quot;</span><span class="content">foo bar</span><span class="delimiter">&quot;</span></span>, <span class="integer">0</span>);
-        noMatch(<span class="string"><span class="delimiter">&quot;</span><span class="content">foo () bar</span><span class="delimiter">&quot;</span></span>, <span class="integer">0</span>);
-        noMatch(<span class="string"><span class="delimiter">&quot;</span><span class="content">foo ( test ) bar</span><span class="delimiter">&quot;</span></span>, <span class="integer">0</span>);
-        noMatch(<span class="string"><span class="delimiter">&quot;</span><span class="content">foo ( , ) bar</span><span class="delimiter">&quot;</span></span>, <span class="integer">0</span>);
-        noMatch(<span class="string"><span class="delimiter">&quot;</span><span class="content">, bar</span><span class="delimiter">&quot;</span></span>, <span class="integer">2</span>);
-        noMatch(<span class="string"><span class="delimiter">&quot;</span><span class="content">( , ) bar</span><span class="delimiter">&quot;</span></span>, <span class="integer">5</span>);
-    }
-
-    <span class="directive">private</span> <span class="type">void</span> noMatch(<span class="predefined-type">String</span> input, <span class="type">int</span> startAt) {
-        PositionFinder finder = PositionFinder.define(<span class="string"><span class="delimiter">&quot;</span><span class="content">,</span><span class="delimiter">&quot;</span></span>, <span class="string"><span class="delimiter">&quot;</span><span class="content">(</span><span class="delimiter">&quot;</span></span>, <span class="string"><span class="delimiter">&quot;</span><span class="content">)</span><span class="delimiter">&quot;</span></span>);
-        Optional&lt;<span class="predefined-type">Integer</span>&gt; find = finder.indexOf(input, startAt);
-        assertFalse(find.isPresent());
-        <span class="predefined-type">List</span>&lt;<span class="predefined-type">Integer</span>&gt; positions = finder.indexesOf(input, startAt);
-        assertTrue(positions.isEmpty());
-    }
-
-    <span class="directive">private</span> <span class="directive">static</span> <span class="type">void</span> assertListEquals(<span class="predefined-type">Collection</span>&lt;<span class="predefined-type">Integer</span>&gt; expected, <span class="predefined-type">Collection</span>&lt;<span class="predefined-type">Integer</span>&gt; actual) {
-        assertEquals(expected.size(), actual.size(), <span class="string"><span class="delimiter">&quot;</span><span class="content">size</span><span class="delimiter">&quot;</span></span>);
-        assertIteratorEquals(expected.iterator(), actual.iterator());
-    }
-
-    <span class="directive">private</span> <span class="directive">static</span> <span class="type">void</span> assertIteratorEquals(<span class="predefined-type">Iterator</span>&lt;?&gt; iteratorExpected, <span class="predefined-type">Iterator</span>&lt;?&gt; iteratorActual) {
-        <span class="type">int</span> i = <span class="integer">0</span>;
-        <span class="keyword">while</span> (iteratorExpected.hasNext()) {
-            <span class="predefined-type">Object</span> e = iteratorExpected.next();
-            <span class="keyword">if</span> (iteratorActual.hasNext()) {
-                <span class="predefined-type">Object</span> a = iteratorActual.next();
-                assertEquals(e, a, <span class="string"><span class="delimiter">&quot;</span><span class="content">element (</span><span class="delimiter">&quot;</span></span> + i + <span class="string"><span class="delimiter">&quot;</span><span class="content">)</span><span class="delimiter">&quot;</span></span>);
-            } <span class="keyword">else</span> {
-                fail(<span class="string"><span class="delimiter">&quot;</span><span class="content">Expected element (</span><span class="delimiter">&quot;</span></span> + i + <span class="string"><span class="delimiter">&quot;</span><span class="content">) not found:</span><span class="delimiter">&quot;</span></span> + e);
-            }
-            i++;
-        }
-
-        <span class="keyword">if</span> (iteratorActual.hasNext()) {
-            <span class="predefined-type">Object</span> a = iteratorActual.next();
-            fail(<span class="string"><span class="delimiter">&quot;</span><span class="content">Additional element (</span><span class="delimiter">&quot;</span></span> + i + <span class="string"><span class="delimiter">&quot;</span><span class="content">) found:</span><span class="delimiter">&quot;</span></span> + a);
-        }
-    }
-}</code></pre>
+assertEquals(<span class="string"><span class="delimiter">&quot;</span><span class="content">lorem(Hello,world)</span><span class="delimiter">&quot;</span></span>, text.substring(<span class="integer">0</span>, findPosition.get()));
+assertEquals(<span class="string"><span class="delimiter">&quot;</span><span class="content">ipsum</span><span class="delimiter">&quot;</span></span>, text.substring(findPosition.get() + <span class="integer">1</span>));</code></pre>
 </div>
 </div>
 <div class="paragraph">
