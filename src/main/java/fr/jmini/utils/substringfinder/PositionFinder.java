@@ -75,7 +75,7 @@ public class PositionFinder {
                 if (find.isPresent()) {
                     return find;
                 }
-                return findIndexOf(text, exclude.getRangeEnd(), text.length());
+                return indexOf(text, exclude.getRangeEnd());
             } else {
                 return findIndexOf(text, startAt, text.length());
             }
