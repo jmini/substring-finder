@@ -30,10 +30,10 @@ public class PositionFinderTest {
         // tag::indexesOf[]
         String text = "'Hello,world',5,true";
 
-        // end::indexOf[]
+        // end::indexesOf[]
         TestUtil.checkInputInFile("testExampleIndexesOf.txt", text);
 
-        // tag::indexOf[]
+        // tag::indexesOf[]
         PositionFinder finder = PositionFinder.define(",", "'", "'");
         List<Integer> findPositions = finder.indexesOf(text);
         assertEquals(2, findPositions.size(), "size");
