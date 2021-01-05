@@ -91,15 +91,6 @@ publishing {
             artifact javadocJar
         }
     }
-    repositories {
-        maven {
-            url = version.endsWith('SNAPSHOT') ? mavenPublishUrlSnapshot : mavenPublishUrlRelease
-            credentials {
-                username = project.findProperty('sonatypeUser') ?: ''
-                password = project.findProperty('sonatypePassword') ?: ''
-            }
-        }
-    }
 }
 
 nexusPublishing {
