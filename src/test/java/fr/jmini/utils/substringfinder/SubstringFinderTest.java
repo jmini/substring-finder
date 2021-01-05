@@ -69,6 +69,30 @@ public class SubstringFinderTest {
         // end::exclude[]
     }
 
+    @Test
+    public void testWithTwoExludedRanges() throws Exception {
+        runWithTwoExludedRanges("(bar '.' bar ')' bar)");
+        runWithTwoExludedRanges("(bar '.' bar '(' bar)");
+        runWithTwoExludedRanges("(bar ')' bar '.' bar)");
+        runWithTwoExludedRanges("(bar '(' bar '.' bar)");
+        runWithTwoExludedRanges("(bar '(' bar ')' bar)");
+        runWithTwoExludedRanges("(bar '(' bar '(' bar)");
+        runWithTwoExludedRanges("(bar ')' bar ')' bar)");
+        runWithTwoExludedRanges("(bar ')' bar '(' bar)");
+    }
+
+    private void runWithTwoExludedRanges(String input) {
+        String text = "foo " + input + " foo";
+        String expected = input;
+        SubstringFinder finder = SubstringFinder.define("(", ")", "'", "'");
+        Optional<Range> findRange = finder.nextRange(text);
+        if (findRange.isPresent()) {
+            Range range = findRange.get();
+            String substring = text.substring(range.getRangeStart(), range.getRangeEnd());
+            assertEquals(expected, substring);
+        }
+    }
+
     private static final String TEST1_VALUE = "[.]x[]xx[[]..]xx[.[::[']:]..]x";
 
     private static final ExpectedRange TEST1_POS1 = new ExpectedRange(1, 2);
